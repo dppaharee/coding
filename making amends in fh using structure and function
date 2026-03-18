@@ -1,0 +1,67 @@
+#include<stdio.h>
+#include<stdlib.h>
+int i=0;
+struct std
+{
+	int id;
+	char name[50];
+} a[2];
+void store()
+{
+	FILE *u=fopen("E:\\codes\\student.bin","wb");
+	if (u==NULL)
+	{
+		printf("file not created");
+		exit(0);
+	}
+	for (i=0; i<2; i++)
+	{
+		printf("\nenter the name of the student:");
+		fflush(stdin);
+		gets(a[i].name);
+		printf("\nenter student id:");
+		scanf("%d",&a[i].id);
+		printf("\n");
+	}
+	fwrite(a,sizeof(a[0]),2,u);
+	fclose(u);
+}
+void replace()
+{
+	int find;
+	struct std cmp;
+	FILE *p=fopen("E:\\codes\\student.bin","rb+");
+	printf("\nenter the id of the student you want to search and replace:");
+	scanf("%d",&find);
+	while (fread(&cmp,sizeof(cmp),1,p)==1)
+	{
+		if (cmp.id==find)
+		{
+			printf("\nid found");
+			fseek(p,-sizeof(cmp),SEEK_CUR);
+			printf("\nwhat do you want to replace the name as?");
+			fflush(stdin);
+			gets(cmp.name);
+			fwrite(&cmp,sizeof(cmp),1,p);
+			break;
+		}
+	}
+	fclose(p);
+}
+void read()
+{
+	FILE* q=fopen("E:\\codes\\student.bin","rb");
+	struct std display;
+	while (fread(&display,sizeof(display),1,q)==1)
+	{
+		printf("%d %s ",display.id,display.name);
+	}
+	fclose(q);
+}
+int main()
+{
+	store();
+	replace();
+	read();
+	return 0;
+}
